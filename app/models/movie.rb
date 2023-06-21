@@ -13,4 +13,9 @@ class Movie < ActiveRecord::Base
     Movie.where('LOWER(rating) IN (?)', ratings.map(&:downcase)) 
   end
 
+  def self.sort_by(ratings, header)
+    # either :release_date or :title for header
+    self.with_ratings(ratings).order(header)
+  end
+
 end

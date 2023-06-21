@@ -7,10 +7,20 @@ class MoviesController < ApplicationController
   end
 
   def index
-    checked_ratings = params[:ratings].nil? ? [] : params[:ratings].keys 
-    @movies = Movie.with_ratings(checked_ratings)
+    @ratings_to_show = params[:ratings].nil? ? [] : params[:ratings].keys 
+    @movies = Movie.with_ratings(@ratings_to_show)
     @all_ratings = Movie.all_ratings
-    @ratings_to_show_hash = checked_ratings
+    @ratings_to_show_hash = Hash[@ratings_to_show.product([1])]
+    puts "Parameters entered:", params
+
+    if not params[:sortBy].nil?
+      @movies = Movie.sort_by(@ratings_to_show, params[:sortBy])
+      if params[:sortBy] == 'title'
+        @title_header = 'hilite bg-warning'
+      elsif
+        @release_header = 'hilite bg-warning'
+      end
+    end
   end
 
   def new
