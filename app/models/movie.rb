@@ -1,6 +1,8 @@
 class Movie < ActiveRecord::Base
   def self.all_ratings
-    Movie.select(:rating).distinct.map(&:rating)  # convert to array
+    # Movie.select(:rating).distinct.map(&:rating)  # convert to array, however, limited ratings are in db render
+    # to be consistent
+    %w[G PG PG-13 R NC-17]  # this is shorthand using spaces for array definition instead of  commas and quotes
   end
 
   def self.with_ratings(ratings)

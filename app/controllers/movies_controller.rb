@@ -7,19 +7,48 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @ratings_to_show = params[:ratings].nil? ? [] : params[:ratings].keys 
-    @movies = Movie.with_ratings(@ratings_to_show)
+    if params[:ratings].nil? && params[:sortBy].nil?  # User did not come from special links by pressing Refresh or sort
+      # No need to save the session again, as it is still in the cookies
+      if session[:ratings].nil? && session[:sortBy].nil?
+        # No previous settings found in the session
+        @movies = Movie.all
+      else
+        # Apply previous sorting and filtering settings from the session
+        @ratings_to_show = session[:ratings]
+        if session[:sortBy].nil?
+          @movies = Movie.with_ratings(@ratings_to_show)
+        else
+          @movies = Movie.sort_by(@ratings_to_show, session[:sortBy])
+          set_sorting_headers(session[:sortBy])
+        end
+      end
+
+    else   # User came from special links, they have params provided, which overrides the sessiosn
+      @ratings_to_show = params[:ratings].nil? ? [] : params[:ratings].keys 
+      @movies = Movie.with_ratings(@ratings_to_show)
+
+      if params[:sortBy].present?
+        @movies = Movie.sort_by(@ratings_to_show, params[:sortBy])
+        set_sorting_headers(params[:sortBy])  # update the headers with color
+      end
+
+      session[:ratings] = @ratings_to_show
+      session[:sortBy] = params[:sortBy]
+    end
+    
+    # set up other class variables that are used in erb
     @all_ratings = Movie.all_ratings
     @ratings_to_show_hash = Hash[@ratings_to_show.product([1])]
-    puts "Parameters entered:", params
 
-    if not params[:sortBy].nil?
-      @movies = Movie.sort_by(@ratings_to_show, params[:sortBy])
-      if params[:sortBy] == 'title'
-        @title_header = 'hilite bg-warning'
-      elsif
-        @release_header = 'hilite bg-warning'
-      end
+    # default renders app/views/movies/index.html.erb
+  end
+
+  private
+  def set_sorting_headers(sortBy)
+    if params[:sortBy] == 'title'
+      @title_header = 'hilite bg-warning'
+    elsif
+      @release_header = 'hilite bg-warning'
     end
   end
 
