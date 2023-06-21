@@ -45,9 +45,9 @@ class MoviesController < ApplicationController
 
   private
   def set_sorting_headers(sortBy)
-    if params[:sortBy] == 'title'
+    if sortBy == 'title'
       @title_header = 'hilite bg-warning'
-    elsif
+    elsif sortBy == 'release_date'
       @release_header = 'hilite bg-warning'
     end
   end

@@ -20,13 +20,13 @@
     <tr>
       <%# Part 2: Conditionally set these title_header and release_date_header... %>
 
-      <th class="<%= @title_header if not @title_header.nil? %>"> 
+      <th class="<%= @title_header if @title_header.present? %>"> 
         <%= link_to "Movie Title", movies_path({sortBy: "title", ratings: @ratings_to_show_hash}), id: 'title_header' %>
       </th>
 
       <th>Rating</th>
 
-      <th class="<%= @release_header if not @release_header.nil? %>">
+      <th class="<%= @release_header if @release_header.present? %>">
         <%= link_to "Release Date", movies_path({sortBy: "release_date", ratings: @ratings_to_show_hash}), id: 'release_date_header'%>
       </th>
 
