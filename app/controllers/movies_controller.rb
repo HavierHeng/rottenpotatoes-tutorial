@@ -7,6 +7,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @ratings_to_show = params[:ratings].nil? ? [] : params[:ratings].keys 
     if params[:ratings].nil? && params[:sortBy].nil?  # User did not come from special links by pressing Refresh or sort
       # No need to save the session again, as it is still in the cookies
       if session[:ratings].nil? && session[:sortBy].nil?
@@ -24,7 +25,6 @@ class MoviesController < ApplicationController
       end
 
     else   # User came from special links, they have params provided, which overrides the sessiosn
-      @ratings_to_show = params[:ratings].nil? ? [] : params[:ratings].keys 
       @movies = Movie.with_ratings(@ratings_to_show)
 
       if params[:sortBy].present?
